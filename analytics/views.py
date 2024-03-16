@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.utils import timezone
+from .models import UserVisit
 
 # Create your views here.
 from rest_framework.response import Response
@@ -14,12 +15,31 @@ class HelloWorld(APIView):
     """
 
     def get(self, request, format=None):
+        # Get current time
+        current_time = timezone.now()
+
+        # Filter for vistors that have visted the app in the last hour
+        recent_visitors = UserVisit.objects.filter(last_seen__gte=current_time - timezone.timedelta(hours=1))
+        num_recent_visitors = recent_visitors.count()
+
+        # Get a list of all vistors and the count the number of vistors
+        all_vistors = UserVisit.objects.values('user')
+        num_all_vistors = 0
+        for item in all_vistors:
+            num_all_vistors += 1
+        
+        # Get total number of page vists per user
+        all_visits = UserVisit.objects.values('visits')
+        num_all_visits = 0
+        for item in all_visits:
+            num_all_visits += int(item['visits'])
+
         data = {
             'version': 1.0,
-            'time': timezone.now(),
-            'recent_visitors': 0,
-            'all_visitors': 0,
-            'all_visits': 0,
+            'time': current_time,
+            'recent_visitors': num_recent_visitors,
+            'all_visitors': num_all_vistors,
+            'all_visits': num_all_visits,
         }
         return Response(data)
 

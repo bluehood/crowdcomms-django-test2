@@ -18,6 +18,7 @@ class RabbitHolesTests(APITestCase):
         )
 
     def test_authentication_required(self):
+        # Passed
         '''
         I can only view the list of rabbitholes if I'm logged in
         '''
@@ -28,6 +29,7 @@ class RabbitHolesTests(APITestCase):
         assert self.client.get(self.url).status_code == 200
 
     def test_can_only_see_my_own_rabbit_holes(self):
+        # Passed
         '''
         I can only see rabbitholes that I created
         '''
@@ -46,6 +48,7 @@ class RabbitHolesTests(APITestCase):
         self.assertEqual(response.data[0].get('location'), 'location1')
 
     def test_bunny_count_calculated_field(self):
+        # Passed
         '''
         The RabbitHole serializer automatically counts the number of bunnies living in the hole
         '''
@@ -71,6 +74,9 @@ class RabbitHolesTests(APITestCase):
         '''
         When we create a rabbithole, the owner is automatically set to the request user
         '''
+        '''
+        I attempted to set the user assigned to the rabbithole in the views.RabbitHoleViewSet.create function, however I could not work out how to get the serializer to be correctly passed to the function.
+        '''
 
         correct_user = User.objects.create_user(username='bob', password='bob', email='bob@test.com')
         wrong_user = User.objects.create_user(username='mavis', password='mavis', email='mavis@test.com')
@@ -94,6 +100,9 @@ class RabbitHolesTests(APITestCase):
         '''
         A superuser can delete any of the rabbitholes
         '''
+        '''
+        Tried to implement this method in bunnies.views.RabbitHoleViewSet.delete however it appears that this function is never called. I cannot work out where this method needs to be called to sucessfully run. For further debugging I would try and lookup how to sucessfully call the delete method.
+        '''
         user = User.objects.create_user(username='user', email='user@test.com', password='rabbits')
         superuser = User.objects.create_user(username='superuser', email='superuser@test.com', password='rabbits',
                                              is_superuser=True)
@@ -106,6 +115,9 @@ class RabbitHolesTests(APITestCase):
     def test_cannot_exceed_bunnies_limit(self):
         '''
         Cannot exceed the limit of bunnies in a rabbithole
+        '''
+        '''
+        I tried to implement these checks in bunnies.seralizers.BunnySerializer.validate however there appears to be an incorrect return value. For further debugging I would try to fix the return value returned by this function to ensure it is correct.
         '''
         user = User.objects.create_user(username='user', email='user@test.com', password='rabbits')
         rabbit_hole = RabbitHole.objects.create(owner=user, location='location', bunnies_limit=3)
@@ -126,6 +138,9 @@ class RabbitHolesTests(APITestCase):
         '''
         The family_members field should return the names of all the bunnies that live in the same rabbit hole as the
         one we are looking at
+        '''
+        '''
+        I didn't have a chance to look at this testcase within the timelimit. To check these testcases I would create another class in bunnies.views (and add another URL to point to /bunnies/<int:id>) which would then return a list of bunnies in the rabbithole of the specified bunny id.
         '''
         user = User.objects.create_user(username='user', email='user@test.com', password='rabbits')
         rabbit_hole = RabbitHole.objects.create(owner=user, location='location')
