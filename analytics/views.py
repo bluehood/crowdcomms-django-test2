@@ -17,6 +17,13 @@ class HelloWorld(APIView):
     def get(self, request, format=None):
         # Get current time
         current_time = timezone.now()
+        
+        # Account for the request made to the /helloworld/ endpoint
+        if request.user.is_authenticated and request.path == '/helloworld/':
+            user_visit, created = UserVisit.objects.get_or_create(user=request.user)
+            user_visit.last_seen = timezone.now()
+            user_visit.visits += 1
+            user_visit.save()
 
         # Filter for vistors that have visted the app in the last hour
         recent_visitors = UserVisit.objects.filter(last_seen__gte=current_time - timezone.timedelta(hours=1))

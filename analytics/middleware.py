@@ -9,12 +9,8 @@ class UserVisitMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        # If user is authenticated and the path is hellword create a UserVist object
-        if request.user.is_authenticated and request.path == '/helloworld/':
-            UserVisit.objects.create(user=request.user)
-
-        # If authenticated and not visiting helloworld update or create Uservisit object
-        if request.user.is_authenticated and request.path != '/helloworld':
+        # If a user is authenticated capture analytics data 
+        if request.user.is_authenticated:
             user_visit, created = UserVisit.objects.get_or_create(user=request.user)
             user_visit.last_seen = timezone.now()
             user_visit.visits += 1

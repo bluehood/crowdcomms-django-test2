@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
@@ -16,26 +16,25 @@ class RabbitHoleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, RabbitHolePermissions)
     queryset = RabbitHole.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    def perform_create(self, serializer):
         # Set the rabbithole owner to the request user.
-        global serializer_class
-        serializer_class.save(owner=request.user)
+        serializer.save(owner=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
         # Only return RabbitHoles that belong to the querying user 
         user = self.request.user
         return queryset.filter(owner=user)
     
-    def delete(self, request, *args, **kwargs):
-        # Check if the user is a superuser 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
         if request.user.is_superuser:
-            self.perform_destroy(self.get_object())
+            self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        
-        # If the user is not a superuser return permission denied response
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
-
 
 class BunnyViewSet(viewsets.ModelViewSet):
     serializer_class = BunnySerializer

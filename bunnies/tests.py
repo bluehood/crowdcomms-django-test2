@@ -71,11 +71,9 @@ class RabbitHolesTests(APITestCase):
         self.assertEqual(response.data.get('bunny_count'), 3)
 
     def test_creating_rabbit_holes_sets_user_from_automatically(self):
+        # Passed
         '''
         When we create a rabbithole, the owner is automatically set to the request user
-        '''
-        '''
-        I attempted to set the user assigned to the rabbithole in the views.RabbitHoleViewSet.create function, however I could not work out how to get the serializer to be correctly passed to the function.
         '''
 
         correct_user = User.objects.create_user(username='bob', password='bob', email='bob@test.com')
@@ -101,7 +99,7 @@ class RabbitHolesTests(APITestCase):
         A superuser can delete any of the rabbitholes
         '''
         '''
-        Tried to implement this method in bunnies.views.RabbitHoleViewSet.delete however it appears that this function is never called. I cannot work out where this method needs to be called to sucessfully run. For further debugging I would try and lookup how to sucessfully call the delete method.
+        Tried to implement this method in bunnies.views.RabbitHoleViewSet.destroy however it appears that this function is never called. I cannot work out where this method needs to be called to sucessfully run. For further debugging I would try and lookup how to sucessfully call the delete method.
         '''
         user = User.objects.create_user(username='user', email='user@test.com', password='rabbits')
         superuser = User.objects.create_user(username='superuser', email='superuser@test.com', password='rabbits',

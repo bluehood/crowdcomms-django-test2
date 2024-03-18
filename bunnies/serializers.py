@@ -17,6 +17,7 @@ class BunnySerializer(serializers.ModelSerializer):
         fields = ('name', 'home', 'family_members')
 
     def validate(self, attrs):
+        print(Bunny.objects.filter(home=attrs).count(), attrs.bunnies_limit)
         if Bunny.objects.filter(home=attrs).count() >= attrs.bunnies_limit:
             return serializers.ValidationError('No more bunnies can fit in the rabbithole')
 
@@ -37,5 +38,6 @@ class RabbitHoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RabbitHole
         fields = ('location', 'bunnies', 'bunny_count', 'owner')
+
 
 
